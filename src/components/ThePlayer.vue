@@ -20,7 +20,7 @@
           class="absolute -top-2.5 -ml-2.5 text-gray-800 text-lg"
           style="left: 50%"
         >
-          <i class="fa-regular fa-circle"></i>
+          <i class="fa-solid fa-circle"></i>
         </span>
         <!-- Player Progress Bar-->
         <span

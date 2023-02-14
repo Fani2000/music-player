@@ -1,5 +1,16 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { storeToRefs } from "pinia";
+import AuthModal from "./components/AuthModal.vue";
+
+const authStore = useAuthStore();
+
+const { toggleAuthModal } = authStore;
+
+const handleAuthModelOpen = () => {
+  toggleAuthModal();
+};
 </script>
 
 <template>
@@ -13,7 +24,9 @@ import { RouterLink, RouterView } from "vue-router";
         <ul class="flex flex-row mt-1">
           <!-- Navigation Links -->
           <li>
-            <a class="px-2 text-white" href="#">Login / Register</a>
+            <a @click="handleAuthModelOpen" class="px-2 text-white" href="#"
+              >Login / Register</a
+            >
           </li>
           <li>
             <a class="px-2 text-white" href="#">Manage</a>
@@ -22,5 +35,6 @@ import { RouterLink, RouterView } from "vue-router";
       </div>
     </nav>
   </header>
+
   <RouterView />
 </template>
