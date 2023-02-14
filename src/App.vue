@@ -3,14 +3,26 @@ import { RouterLink, RouterView } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import AuthModal from "./components/AuthModal.vue";
+import { onMounted } from "vue";
+import { getAuth } from "@firebase/auth";
 
 const authStore = useAuthStore();
 
-const { toggleAuthModal } = authStore;
+const { isLoggedIn, user } = storeToRefs(authStore);
+const { toggleAuthModal, addUser, loginUser } = authStore;
 
 const handleAuthModelOpen = () => {
   toggleAuthModal();
 };
+
+onMounted(() => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    addUser(user);
+    loginUser();
+  }
+});
 </script>
 
 <template>
@@ -21,15 +33,20 @@ const handleAuthModelOpen = () => {
 
       <div class="flex flex-grow items-center">
         <!-- Primary Navigation -->
-        <ul class="flex flex-row mt-1">
+        <ul class="flex flex-grow flex-row mt-1">
           <!-- Navigation Links -->
-          <li>
+          <li v-show="!isLoggedIn">
             <a @click="handleAuthModelOpen" class="px-2 text-white" href="#"
               >Login / Register</a
             >
           </li>
-          <li>
+
+          <li class="flex-1" v-show="isLoggedIn">
             <a class="px-2 text-white" href="#">Manage</a>
+          </li>
+
+          <li class="" v-show="isLoggedIn">
+            <a class="px-2 text-white">Logout</a>
           </li>
         </ul>
       </div>

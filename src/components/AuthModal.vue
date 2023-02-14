@@ -2,14 +2,14 @@
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
-import { db, signup, signin } from "@/firebase/firebase";
+import { signup, signin } from "@/firebase/firebase";
 
 const authStore = useAuthStore();
 
 const tab = ref("login");
 const { isAuthModal } = storeToRefs(authStore);
 
-const { toggleAuthModal, addUser } = authStore;
+const { toggleAuthModal, addUser, loginUser } = authStore;
 
 const registerSchema = {
   name: "required|min:3|max:100|alphaSpaces",
@@ -52,11 +52,14 @@ const handleLoginUser = async (formData) => {
     return;
   }
 
-  
-  addUser(user.user);
+  addUser(user);
+  loginUser();
   log_alert_variant.value = "bg-green-500";
   log_alert_msg.value = "Success! You have successfully logged in.";
-  console.log(user)
+
+  setTimeout(() => {
+    toggleAuthModal();
+  }, 1000);
 };
 
 const handleRegisterUser = async (formData) => {
@@ -66,7 +69,12 @@ const handleRegisterUser = async (formData) => {
   reg_alert_variant.value = "bg-blue-500";
   reg_alert_msg.value = "Please wait! Your account is being created.";
 
-  const { user } = await signup(formData.email, formData.password);
+  const { user } = await signup(
+    formData.email,
+    formData.password,
+    formData.age,
+    formData.country
+  );
 
   if (!user) {
     reg_alert_variant.value = "bg-blue-500";
@@ -76,9 +84,13 @@ const handleRegisterUser = async (formData) => {
   }
 
   addUser(user);
+  loginUser();
   reg_alert_variant.value = "bg-green-500";
   reg_alert_msg.value = "Success! Your account has been created.";
-  console.log(user);
+
+  setTimeout(() => {
+    toggleAuthModal();
+  }, 1000);
 };
 </script>
 <template>

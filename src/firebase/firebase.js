@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, addDoc, collection } from "firebase/firestore";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDzy9wkCv0NoayQccmXEGvoEBRLsQyyFiU",
@@ -14,13 +19,44 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export const db = getFirestore(app);
+const db = getFirestore(app);
+const auth = getAuth();
 
-export const signup = async (email, password) => {
+const addUser = async (email, age, country, name, uid) => {
   try {
-    const auth = getAuth();
+    const docRef = await addDoc(collection(db, "users"), {
+      email,
+      name,
+      age,
+      country,
+      uid,
+    });
+
+    console.log("USER STORED SUCCESSFULLY");
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const signup = async (email, password, age, country) => {
+  try {
     const user = await createUserWithEmailAndPassword(auth, email, password);
-    console.log(user);
+
+    const isAdded = await addUser(
+      email,
+      age,
+      country,
+      user.user.displayName ?? "test",
+      user.user.uid
+    );
+
+    if (!isAdded) {
+      throw new Error("Please try again later! Failed to add the user.", 500);
+    }
+
     return user;
   } catch (error) {
     const errorCode = error.code;
@@ -31,9 +67,8 @@ export const signup = async (email, password) => {
 
 export const signin = async (email, password) => {
   try {
-    const auth = getAuth();
     const user = await signInWithEmailAndPassword(auth, email, password);
-    console.log(user);
+    // console.log(user);
     return user;
   } catch (error) {
     const errorCode = error.code;
@@ -41,3 +76,7 @@ export const signin = async (email, password) => {
     throw new Error(errorMessage, errorCode);
   }
 };
+
+// Auth.signup(email, password)
+// Auth.signin(email, password)
+// new Auth(email, password).signup().signin().signout()

@@ -3,15 +3,23 @@ import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
-import VeeValidatePlugin from './includes/validation'
+import VeeValidatePlugin from "./includes/validation";
 
 import "./assets/css/main.css";
 
-const app = createApp(App);
+import { getAuth } from "firebase/auth";
 
+let app;
+const auth = getAuth();
 
-app.use(VeeValidatePlugin)
-app.use(createPinia());
-app.use(router);
+auth.onAuthStateChanged((user) => {
+  if (!app) {
+    app = createApp(App);
 
-app.mount("#app");
+    app.use(VeeValidatePlugin);
+    app.use(createPinia());
+    app.use(router);
+
+    app.mount("#app");
+  }
+});
