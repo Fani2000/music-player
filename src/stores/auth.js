@@ -3,10 +3,15 @@ import { defineStore } from "pinia";
 
 export const useAuthStore = defineStore("AuthStore", () => {
   const isAuthModal = ref(false);
+  const user = ref({})
 
   const toggleAuthModal = () => {
     isAuthModal.value = !isAuthModal.value;
   };
 
-  return { isAuthModal, toggleAuthModal };
+  const addUser = (_user) => {
+    user.value = _user
+  }
+
+  return { isAuthModal, toggleAuthModal, addUser };
 });

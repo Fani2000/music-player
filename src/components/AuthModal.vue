@@ -2,13 +2,14 @@
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
+import { db, signup, signin } from "@/firebase/firebase";
 
 const authStore = useAuthStore();
 
 const tab = ref("login");
 const { isAuthModal } = storeToRefs(authStore);
 
-const { toggleAuthModal } = authStore;
+const { toggleAuthModal, addUser } = authStore;
 
 const registerSchema = {
   name: "required|min:3|max:100|alphaSpaces",
@@ -35,28 +36,49 @@ const log_show_alert = ref(false);
 const log_alert_variant = ref("bg-blue-500");
 const log_alert_msg = ref("Please wait! You are logging in.");
 
-const handleLoginUser = (formData) => {
+const handleLoginUser = async (formData) => {
   console.log(formData);
   log_show_alert.value = true;
   log_in_submission.value = true;
   log_alert_variant.value = "bg-blue-500";
   log_alert_msg.value = "Please wait! Your account is being created.";
 
+  const { user } = await signin(formData.email, formData.password);
 
+  if (!user) {
+    reg_alert_variant.value = "bg-blue-500";
+    reg_alert_msg.value =
+      "An unexpected error occurred. Please try again later.";
+    return;
+  }
+
+  
+  addUser(user.user);
   log_alert_variant.value = "bg-green-500";
   log_alert_msg.value = "Success! You have successfully logged in.";
+  console.log(user)
 };
 
-const handleRegisterUser = (formData) => {
+const handleRegisterUser = async (formData) => {
   console.log(formData);
   reg_show_alert.value = true;
   reg_in_submission.value = true;
   reg_alert_variant.value = "bg-blue-500";
   reg_alert_msg.value = "Please wait! Your account is being created.";
 
+  const { user } = await signup(formData.email, formData.password);
 
+  if (!user) {
+    reg_alert_variant.value = "bg-blue-500";
+    reg_alert_msg.value =
+      "An unexpected error occurred. Please try again later.";
+    return;
+  }
+
+  addUser(user);
   reg_alert_variant.value = "bg-green-500";
   reg_alert_msg.value = "Success! Your account has been created.";
+  console.log(user);
 };
 </script>
 <template>
