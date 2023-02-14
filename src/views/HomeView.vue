@@ -1,8 +1,14 @@
 <script setup>
+import TheIntroduction from '../components/TheIntroduction.vue';
+import TheMainContent from '../components/TheMainContent.vue';
+import ThePlayer from '../components/ThePlayer.vue';
+
 </script>
 
 <template>
-  <main class="h-screen bg-green-400">
-    <h1>Welcome home</h1>
+  <main>
+    <TheIntroduction />
+    <TheMainContent />
+    <ThePlayer />
   </main>
 </template>
