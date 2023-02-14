@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <main>
-    Welcome to main
+  <main class="h-screen bg-green-400">
+    <h1>Welcome home</h1>
   </main>
 </template>
