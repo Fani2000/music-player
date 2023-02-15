@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import AuthModal from "./components/AuthModal.vue";
 import { onMounted } from "vue";
 import { getAuth } from "@firebase/auth";
+import { signout } from "./firebase/firebase";
 
 const authStore = useAuthStore();
 
@@ -14,6 +15,11 @@ const { toggleAuthModal, addUser, loginUser } = authStore;
 const handleAuthModelOpen = () => {
   toggleAuthModal();
 };
+
+const handleLogOut = () => {
+  signout() 
+  window.location.reload()
+}
 
 onMounted(() => {
   const auth = getAuth();
@@ -45,7 +51,7 @@ onMounted(() => {
             <a class="px-2 text-white" href="#">Manage</a>
           </li>
 
-          <li class="" v-show="isLoggedIn">
+          <li class="cursor-pointer" @click="handleLogOut" v-show="isLoggedIn">
             <a class="px-2 text-white">Logout</a>
           </li>
         </ul>

@@ -77,6 +77,13 @@ export const signin = async (email, password) => {
   }
 };
 
+export const signout = async () => {
+  // await signOut(auth)
+  const auth = getAuth();
+  await signOut(auth)
+  console.log('LOGINING OUT>>>')
+};
+
 // Auth.signup(email, password)
 // Auth.signin(email, password)
 // new Auth(email, password).signup().signin().signout()
