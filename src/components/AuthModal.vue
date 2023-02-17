@@ -154,6 +154,7 @@ const handleRegisterUser = async (formData) => {
               <vee-field
                 type="email"
                 name="email"
+                autocomplete="username"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Email"
               />
@@ -163,6 +164,7 @@ const handleRegisterUser = async (formData) => {
               <label class="inline-block mb-2">Password</label>
               <vee-field
                 type="password"
+                autocomplete="new-password"
                 name="password"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Password"
@@ -201,6 +203,7 @@ const handleRegisterUser = async (formData) => {
               <vee-field
                 type="email"
                 name="email"
+                autocomplete="username"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Enter Email"
               />
@@ -218,7 +221,8 @@ const handleRegisterUser = async (formData) => {
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
               <vee-field
-              name="password"
+                name="password"
+                autocomplete="new-password"
                 type="password"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Password"
@@ -229,6 +233,7 @@ const handleRegisterUser = async (formData) => {
               <label class="inline-block mb-2">Confirm Password</label>
               <vee-field
                 type="password"
+                autocomplete="new-password"
                 name="confirm_password"
                 class="block w-full py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
                 placeholder="Confirm Password"

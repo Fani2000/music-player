@@ -1,11 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, addDoc, collection } from "firebase/firestore";
+// prettier-ignore
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,} from "firebase/auth";
+
 import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDzy9wkCv0NoayQccmXEGvoEBRLsQyyFiU",
@@ -21,6 +25,7 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 const auth = getAuth();
+const storage = getStorage();
 
 const addUser = async (email, age, country, name, uid) => {
   try {
@@ -80,8 +85,45 @@ export const signin = async (email, password) => {
 export const signout = async () => {
   // await signOut(auth)
   const auth = getAuth();
-  await signOut(auth)
-  console.log('LOGINING OUT>>>')
+  await signOut(auth);
+  console.log("LOGINING OUT>>>");
+};
+
+export const uploadFile = (file) => {
+  const storageRef = ref(storage, "songs/" + file.name);
+  try {
+    const snapshot = uploadBytesResumable(storageRef, file);
+
+    if (snapshot) {
+      console.log("FINISHED UPLOADING THE FILE", snapshot);
+      return snapshot;
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to upload the file.");
+  }
+};
+
+export const storeUserRelatedSong = async (taskName, ref) => {
+  const auth = getAuth();
+
+  const song = {
+    uid: auth.currentUser.uid,
+    display_name: auth.currentUser.displayName,
+    original_name: taskName,
+    modified_name: taskName,
+    genre: "",
+    comment_count: 0,
+    url: "",
+  };
+
+  const url = await getDownloadURL(ref);
+
+  song.url = url;
+
+  console.log(song);
+
+  await addDoc(collection(db, "songs"), song);
 };
 
 // Auth.signup(email, password)
