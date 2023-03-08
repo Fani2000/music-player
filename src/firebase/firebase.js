@@ -1,9 +1,17 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 // prettier-ignore
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,} from "firebase/auth";
 
 import {
+  deleteObject,
   getDownloadURL,
   getStorage,
   ref,
@@ -23,9 +31,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
-const auth = getAuth();
-const storage = getStorage();
+export const db = getFirestore(app);
+export const auth = getAuth();
+export const storage = getStorage();
 
 const addUser = async (email, age, country, name, uid) => {
   try {
@@ -104,6 +112,20 @@ export const uploadFile = (file) => {
   }
 };
 
+export const deleteSong = async (song) => {
+  const storageRef = ref(storage, "songs/" + song.modified_name);
+  const songDocRef = doc(db, "songs", song.docId);
+
+  try {
+    await deleteObject(storageRef);
+    await deleteDoc(songDocRef);
+    return song;
+  } catch (e) {
+    console.log("ERROR", e);
+    console.error(e);
+  }
+};
+
 export const storeUserRelatedSong = async (taskName, ref) => {
   const auth = getAuth();
 
@@ -126,6 +148,23 @@ export const storeUserRelatedSong = async (taskName, ref) => {
   await addDoc(collection(db, "songs"), song);
 };
 
-// Auth.signup(email, password)
-// Auth.signin(email, password)
-// new Auth(email, password).signup().signin().signout()
+/**
+ * @description Get all the songs from the users db
+ * @return Array<Object> songs
+ */
+export const getSongs = async () => {
+  try {
+    const songs = [];
+    const docRef = collection(db, "songs");
+    console.log("DOCUMENT REF", docRef);
+    const docSnapshots = await getDocs(docRef);
+    docSnapshots.docs.forEach((doc) =>
+      songs.push({ ...doc.data(), docId: doc.id })
+    );
+    console.log("SONGS", songs);
+    return songs;
+  } catch (error) {
+    console.log(error);
+    console.log("ERROR");
+  }
+};
