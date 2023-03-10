@@ -6,6 +6,9 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  query,
+  limit,
+  getDoc,
 } from "firebase/firestore";
 // prettier-ignore
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,} from "firebase/auth";
@@ -113,7 +116,7 @@ export const uploadFile = (file) => {
 };
 
 export const deleteSong = async (song) => {
-  const storageRef = ref(storage, "songs/" + song.modified_name);
+  const storageRef = ref(storage, "songs/" + song.original_name);
   const songDocRef = doc(db, "songs", song.docId);
 
   try {
@@ -152,16 +155,20 @@ export const storeUserRelatedSong = async (taskName, ref) => {
  * @description Get all the songs from the users db
  * @return Array<Object> songs
  */
-export const getSongs = async () => {
+export const getSongs = async (_limit) => {
   try {
     const songs = [];
     const docRef = collection(db, "songs");
-    console.log("DOCUMENT REF", docRef);
-    const docSnapshots = await getDocs(docRef);
+    let docSnapshots;
+
+    const q = query(docRef, limit(_limit));
+
+    if (limit) docSnapshots = await getDocs(q);
+    else docSnapshots = await getDocs(docRef);
+
     docSnapshots.docs.forEach((doc) =>
       songs.push({ ...doc.data(), docId: doc.id })
     );
-    console.log("SONGS", songs);
     return songs;
   } catch (error) {
     console.log(error);

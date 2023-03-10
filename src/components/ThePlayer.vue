@@ -1,9 +1,13 @@
+<script setup>
+const props = defineProps({ song: Object });
+</script>
+
 <template>
   <!-- Player -->
   <div class="fixed bottom-0 left-0 bg-white px-4 py-2 w-full">
     <!-- Track Info -->
     <div class="text-center">
-      <span class="song-title font-bold">Song Title</span> by
+      <span class="song-title font-bold">{{ song?.modified_name }}</span> by
       <span class="song-artist">Artist</span>
     </div>
     <div class="flex flex-nowrap gap-4 items-center">
