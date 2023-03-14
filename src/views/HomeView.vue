@@ -8,28 +8,30 @@ import headphones from "@/assets/headphones.svg";
 import { getSongs } from "../firebase/firebase";
 
 const songs = ref([]);
+const count = ref(1);
 
 const getSongsAndUpdateSongs = async (limit) => {
   const _songs = await getSongs(limit);
-  console.log("SONGS", _songs);
   songs.value = _songs;
 };
 
-const handleScroll = (e) => {
+const handleScroll = async (e) => {
   const { scrollTop, offsetHeight } = document.documentElement;
   const { innerHeight } = window;
+  const songsLength = (await getSongs()).length;
 
   const bottomOfWindow = Math.round(scrollTop) + innerHeight === offsetHeight;
 
-  if (bottomOfWindow) {
-    console.log("Request more data");
-    getSongsAndUpdateSongs(2);
+  if (bottomOfWindow && count.value < songsLength) {
+    console.log("Request more songs...");
+    count.value++;
+    getSongsAndUpdateSongs(count.value);
   }
 };
 
 onMounted(async () => {
   window.addEventListener("scroll", handleScroll);
-  getSongsAndUpdateSongs(1);
+  getSongsAndUpdateSongs(count.value);
 });
 </script>
 
@@ -61,6 +63,6 @@ onMounted(async () => {
         <!-- .. end Playlist -->
       </div>
     </section>
-    <ThePlayer :song="songs.value?.[0]" />
+    <ThePlayer :song="songs?.value?.[0]" />
   </main>
 </template>

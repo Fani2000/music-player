@@ -9,7 +9,7 @@ const props = defineProps({
 const emits = defineEmits({ removeSong: Function });
 
 const showForm = ref(false);
-const in_submission = ref(false);
+const is_submission = ref(false);
 const show_alert = ref(false);
 const alert_variant = ref("bg-blue-500");
 const alert_message = ref("Please wait! Updating song info.");

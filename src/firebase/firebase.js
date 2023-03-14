@@ -8,7 +8,8 @@ import {
   doc,
   query,
   limit,
-  getDoc,
+  orderBy,
+  startAfter,
 } from "firebase/firestore";
 // prettier-ignore
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,} from "firebase/auth";
@@ -147,8 +148,8 @@ export const storeUserRelatedSong = async (taskName, ref) => {
   song.url = url;
 
   console.log(song);
-
   await addDoc(collection(db, "songs"), song);
+
 };
 
 /**
@@ -158,17 +159,28 @@ export const storeUserRelatedSong = async (taskName, ref) => {
 export const getSongs = async (_limit) => {
   try {
     const songs = [];
+
     const docRef = collection(db, "songs");
-    let docSnapshots;
 
-    const q = query(docRef, limit(_limit));
+    let docSnapshots = await getDocs(docRef); // gets all the songs
+  
+    if (limit) {
+      const lastDoc = docSnapshots.docs[docSnapshots.docs.length - 1]; // gets the last visible song
 
-    if (limit) docSnapshots = await getDocs(q);
-    else docSnapshots = await getDocs(docRef);
+      const q = query(
+        docRef,
+        orderBy("modified_name"),
+        limit(_limit)
+      );
+
+
+      docSnapshots = await getDocs(q); // if there is a limit, then it modifies the query to include the limit and skipping.
+    }
 
     docSnapshots.docs.forEach((doc) =>
       songs.push({ ...doc.data(), docId: doc.id })
     );
+
     return songs;
   } catch (error) {
     console.log(error);
