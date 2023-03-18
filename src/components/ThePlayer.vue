@@ -1,5 +1,11 @@
 <script setup>
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { usePlayerStore } from "../stores/player";
+
 const props = defineProps({ song: Object });
+const playing = computed(() => usePlayerStore().playing);
+const { toggleAudio } = usePlayerStore();
 </script>
 
 <template>
@@ -12,8 +18,12 @@ const props = defineProps({ song: Object });
     </div>
     <div class="flex flex-nowrap gap-4 items-center">
       <!-- Play/Pause Button -->
-      <button type="button">
-        <i class="fa-solid fa-circle-play text-gray-500 text-xl"></i>
+      <button type="button" @click.prevent="toggleAudio">
+        <i
+          v-if="!playing"
+          class="fa-solid fa-circle-play text-gray-500 text-xl"
+        ></i>
+        <i v-else class="fa-solid fa-circle-pause text-gray-500 text-xl"></i>
       </button>
       <!-- Current Position -->
       <div class="player-currenttime">00:00</div>

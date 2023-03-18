@@ -10,6 +10,7 @@
         <!-- Play/Pause Button -->
         <button
           type="button"
+          @click.prevent="playSong(song)"
           class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
         >
           <i class="fa-solid fa-play-circle"></i>
@@ -34,7 +35,7 @@
       >
         <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
           <!-- Comment Count -->
-          <span class="card-title">Comments ({{ comments.length }})</span>
+          <span class="card-title">Comments ({{ comments?.length }})</span>
           <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
         </div>
         <div class="p-6">
@@ -96,16 +97,18 @@ import { useRoute } from "vue-router";
 import songImage from "@/assets/img/song-header.png";
 import ThePlayer from "../components/ThePlayer.vue";
 import Comment from "../components/Comment.vue";
-import { useDateFormat, useNow, useTimeAgo } from "@vueuse/core";
+import { useNow, useTimeAgo } from "@vueuse/core";
 import { onMounted, ref, watch } from "vue";
 import { getSong, addComment as _addComment, auth } from "@/firebase/firebase";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import { getComments } from "../firebase/firebase";
+import { usePlayerStore } from "@/stores/player";
 
 const route = useRoute();
 const id = route.params.id;
 const { isLoggedIn } = storeToRefs(useAuthStore());
+const { handlePlaySong, } = usePlayerStore();
 
 const comment_in_submission = ref(false),
   comment_show_alert = ref(false),
@@ -131,6 +134,10 @@ watch(sort, (newSort) => {
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   }
 });
+
+const playSong = (song) => {
+  handlePlaySong(song);
+}
 
 const addComment = async (data, context) => {
   comment_in_submission.value = true;

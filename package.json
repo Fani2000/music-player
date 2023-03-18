@@ -13,6 +13,7 @@
     "@vee-validate/rules": "^4.7.4",
     "@vueuse/core": "^9.13.0",
     "firebase": "^9.17.1",
+    "howler": "^2.2.3",
     "pinia": "^2.0.28",
     "vee-validate": "^4.7.4",
     "vue": "^3.2.45",
