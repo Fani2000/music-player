@@ -13,7 +13,9 @@
           @click.prevent="playSong(song)"
           class="z-50 h-24 w-24 text-3xl bg-white text-black rounded-full focus:outline-none"
         >
-          <i class="fa-solid fa-play-circle"></i>
+          <!-- <i class="fa-solid fa-play-circle"></i> -->
+          <i v-if="!playing" class="fa-solid fa-circle-play"></i>
+          <i v-else class="fa-solid fa-circle-pause"></i>
         </button>
         <div class="z-50 text-left ml-8">
           <!-- Song Info -->
@@ -98,7 +100,7 @@ import songImage from "@/assets/img/song-header.png";
 import ThePlayer from "../components/ThePlayer.vue";
 import Comment from "../components/Comment.vue";
 import { useNow, useTimeAgo } from "@vueuse/core";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { getSong, addComment as _addComment, auth } from "@/firebase/firebase";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
@@ -108,7 +110,9 @@ import { usePlayerStore } from "@/stores/player";
 const route = useRoute();
 const id = route.params.id;
 const { isLoggedIn } = storeToRefs(useAuthStore());
-const { handlePlaySong } = usePlayerStore();
+const { handlePlaySong, toggleAudio } = usePlayerStore();
+
+const playing = computed(() => usePlayerStore().playing);
 
 const comment_in_submission = ref(false),
   comment_show_alert = ref(false),

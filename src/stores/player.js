@@ -30,7 +30,7 @@ export const usePlayerStore = defineStore("player", {
       }
     },
     handlePlaySong(song) {
-    if(this.sound instanceof Howl) this.sound.unload()
+      if (this.sound instanceof Howl) this.sound.unload();
 
       this.current_song = song;
       this.sound = new Howl({
@@ -43,6 +43,18 @@ export const usePlayerStore = defineStore("player", {
       this.sound.on("play", () => {
         requestAnimationFrame(this.progress);
       });
+    },
+    updateSeek(event) {
+      if (!this.sound.playing) return;
+
+      const { x, width } = event.currentTarget.getBoundingClientRect();
+      // Document = 2000, Timeline - 1000, clientx = 1000 Distance - 50
+      const clientX = event.clientX - x;
+      const percentage = clientX / width;
+      const seconds = this.sound.duration() * percentage;
+
+      this.sound.seek(seconds);
+      this.sound.once("seek", this.progress);
     },
     async toggleAudio() {
       console.log("TOGGLE AUDIO");

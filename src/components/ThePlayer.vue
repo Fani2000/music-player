@@ -9,7 +9,7 @@ const seek = computed(() => usePlayerStore().seek);
 const duration = computed(() => usePlayerStore().duration);
 const playerProgress = computed(() => usePlayerStore().playerProgress);
 
-const { toggleAudio } = usePlayerStore();
+const { toggleAudio, updateSeek } = usePlayerStore();
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const { toggleAudio } = usePlayerStore();
       <!-- Current Position -->
       <div class="player-currenttime">{{ seek }}</div>
       <!-- Scrub Container  -->
-      <div class="w-full h-2 rounded bg-gray-200 relative cursor-pointer">
+      <div @click.prevent="updateSeek" class="w-full h-2 rounded bg-gray-200 relative cursor-pointer">
         <!-- Player Ball -->
         <span
           class="absolute -top-1.5 -ml-2.5 text-gray-800 text-lg z-40"
