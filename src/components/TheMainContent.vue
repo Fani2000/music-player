@@ -19,10 +19,15 @@ const props = defineProps({ song: Object });
       </div>
 
       <div class="text-gray-600 text-lg">
-        <span class="comments">
-          <i class="fa fa-comments text-gray-600"></i>
-          15
-        </span>
+        <RouterLink
+          :to="{ path: `/song/${song?.docId}`, hash: '#comments' }"
+          v-slot="{ navigate }"
+        >
+          <span class="comments" @click="navigate">
+            <i class="fa fa-comments text-gray-600"></i>
+            15
+          </span>
+        </RouterLink>
       </div>
     </li>
   </ol>
