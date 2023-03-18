@@ -207,3 +207,24 @@ export const addComment = async (comment) => {
     return false;
   }
 };
+
+export const getComments = async (id) => {
+  try {
+    const comments = [];
+    const _ref = collection(db, "comments");
+    const q = query(_ref, where("sid", "==", id));
+
+    const docSnapshots = await getDocs(q);
+
+    docSnapshots.docs.forEach((doc) => {
+      comments.push({
+        docID: doc.id,
+        ...doc.data(),
+      });
+    });
+    return comments;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};

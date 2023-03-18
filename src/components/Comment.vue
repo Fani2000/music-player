@@ -3,7 +3,7 @@
     <!-- Comment Author -->
     <div class="mb-5">
       <div class="font-bold">{{ author }}</div>
-      <time>{{ useTimeAgo(createdAt).value }}</time>
+      <time>{{ createdAt }}</time>
     </div>
 
     <p>
@@ -13,6 +13,9 @@
 </template>
 
 <script setup>
-import { useTimeAgo } from "@vueuse/core";
-defineProps({ author: String, createdAt: Date, message: String });
+const props = defineProps({
+  author: String,
+  createdAt: String,
+  message: String,
+});
 </script>

@@ -34,7 +34,7 @@
       >
         <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
           <!-- Comment Count -->
-          <span class="card-title">Comments (15)</span>
+          <span class="card-title">Comments ({{ comments.length }})</span>
           <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
         </div>
         <div class="p-6">
@@ -68,6 +68,7 @@
           <!-- Sort Comments -->
           <select
             class="block mt-4 py-1.5 px-3 text-gray-800 border border-gray-300 transition duration-500 focus:outline-none focus:border-black rounded"
+            v-model="sort"
           >
             <option value="1">Latest</option>
             <option value="2">Oldest</option>
@@ -77,11 +78,13 @@
     </section>
     <!-- Comments -->
     <ul class="container mx-auto">
-      <Comment
-        author="Fani Keorapetse"
-        :created-at="useNow().value"
-        message="a communication containing some information, news, advice, request, or the like, sent by messenger, telephone, email, or other means. an official communication, as from a chief executive to a legislative body: the president's message to Congress."
-      />
+      <template v-for="comment in comments" :key="comment.docID">
+        <Comment
+          :author="comment?.name ?? 'Fani Keorapetse'"
+          :created-at="useTimeAgo(new Date(comment?.createdAt)).value"
+          :message="comment?.content"
+        />
+      </template>
     </ul>
 
     <ThePlayer />
@@ -93,11 +96,12 @@ import { useRoute } from "vue-router";
 import songImage from "@/assets/img/song-header.png";
 import ThePlayer from "../components/ThePlayer.vue";
 import Comment from "../components/Comment.vue";
-import { useNow } from "@vueuse/core";
-import { onMounted, ref } from "vue";
+import { useDateFormat, useNow, useTimeAgo } from "@vueuse/core";
+import { onMounted, ref, watch } from "vue";
 import { getSong, addComment as _addComment, auth } from "@/firebase/firebase";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
+import { getComments } from "../firebase/firebase";
 
 const route = useRoute();
 const id = route.params.id;
@@ -108,11 +112,25 @@ const comment_in_submission = ref(false),
   comment_alert_variant = ref("bg-blue-500"),
   comment_alert_message = ref("Please wait! Your comment is being submitted.");
 
+const sort = ref("1");
+const comments = ref();
 const song = ref({});
 
 const schema = {
   comment: "required|min:3",
 };
+
+watch(sort, (newSort) => {
+  if (newSort == "1") {
+    comments.value = comments.value
+      .slice()
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } else {
+    comments.value = comments.value
+      .slice()
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }
+});
 
 const addComment = async (data, context) => {
   comment_in_submission.value = true;
@@ -130,6 +148,9 @@ const addComment = async (data, context) => {
   };
 
   const docCreated = await _addComment(comment);
+
+  await _getComments(id);
+
   if (docCreated) {
     comment_in_submission.value = true;
     comment_show_alert.value = true;
@@ -149,9 +170,15 @@ const addComment = async (data, context) => {
   comment_show_alert.value = false;
 };
 
+const _getComments = async (id) => {
+  const _comments = await getComments(id);
+  comments.value = _comments;
+};
+
 onMounted(async () => {
   console.log(id);
   const _song = await getSong(id);
   if (Object.keys(_song).length > 0) song.value = _song;
+  await _getComments(id);
 });
 </script>
