@@ -8,7 +8,7 @@ import headphones from "@/assets/headphones.svg";
 import { getSongs } from "../firebase/firebase";
 
 const songs = ref([]);
-const count = ref(1);
+const count = ref(4);
 
 const getSongsAndUpdateSongs = async (limit) => {
   const _songs = await getSongs(limit);
@@ -37,7 +37,6 @@ onMounted(async () => {
 
 <template>
   <main>
-    <AuthModal />
     <TheIntroduction />
     <!-- Main Content -->
     <section class="container mx-auto">

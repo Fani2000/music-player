@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 import AuthModal from "./components/AuthModal.vue";
@@ -16,9 +16,9 @@ const handleAuthModelOpen = () => {
   toggleAuthModal();
 };
 
-const handleLogOut = () => {
-  signout();
-  window.location.reload();
+const handleLogOut = async () => {
+  await signout();
+  useRouter().replace("/");
 };
 
 onMounted(() => {
@@ -35,7 +35,11 @@ onMounted(() => {
   <header id="header" class="bg-gray-700">
     <nav class="container mx-auto flex justify-start items-center py-5 px-4">
       <!-- App Name -->
-      <router-link class="text-white font-bold uppercase text-2xl mr-4" to="/" exact-active-class="no-active">
+      <router-link
+        class="text-white font-bold uppercase text-2xl mr-4"
+        to="/"
+        exact-active-class="no-active"
+      >
         Music
       </router-link>
 
@@ -43,10 +47,8 @@ onMounted(() => {
         <!-- Primary Navigation -->
         <ul class="flex flex-grow flex-row mt-1">
           <!-- Navigation Links -->
-          <li v-if="!isLoggedIn">
-            <a @click="handleAuthModelOpen" class="px-2 text-white" href="#">
-              Login / Register
-            </a>
+          <li v-if="!isLoggedIn" @click="handleAuthModelOpen">
+            <a class="px-2 text-white" href="#"> Login / Register </a>
           </li>
           <template v-else>
             <li class="flex-1">
@@ -70,5 +72,6 @@ onMounted(() => {
     </nav>
   </header>
 
+  <AuthModal />
   <RouterView />
 </template>

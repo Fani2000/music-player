@@ -10,6 +10,8 @@ import {
   limit,
   orderBy,
   startAfter,
+  where,
+  getDoc,
 } from "firebase/firestore";
 // prettier-ignore
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,} from "firebase/auth";
@@ -149,7 +151,6 @@ export const storeUserRelatedSong = async (taskName, ref) => {
 
   console.log(song);
   await addDoc(collection(db, "songs"), song);
-
 };
 
 /**
@@ -163,16 +164,11 @@ export const getSongs = async (_limit) => {
     const docRef = collection(db, "songs");
 
     let docSnapshots = await getDocs(docRef); // gets all the songs
-  
+
     if (limit) {
       const lastDoc = docSnapshots.docs[docSnapshots.docs.length - 1]; // gets the last visible song
 
-      const q = query(
-        docRef,
-        orderBy("modified_name"),
-        limit(_limit)
-      );
-
+      const q = query(docRef, orderBy("modified_name"), limit(_limit));
 
       docSnapshots = await getDocs(q); // if there is a limit, then it modifies the query to include the limit and skipping.
     }
@@ -185,5 +181,29 @@ export const getSongs = async (_limit) => {
   } catch (error) {
     console.log(error);
     console.log("ERROR");
+  }
+};
+
+export const getSong = async (id) => {
+  try {
+    const songRef = doc(db, "songs", id);
+    const song = await getDoc(songRef);
+    console.log("SONG FOUND", song.data());
+    return song.exists() ? song.data() : {};
+  } catch (error) {
+    console.log("ERROR", error);
+  }
+};
+
+export const addComment = async (comment) => {
+  try {
+    const _ref = await collection(db, "comments");
+    await addDoc(_ref, {
+      ...comment,
+    });
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 };
