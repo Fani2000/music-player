@@ -108,7 +108,7 @@ import { usePlayerStore } from "@/stores/player";
 const route = useRoute();
 const id = route.params.id;
 const { isLoggedIn } = storeToRefs(useAuthStore());
-const { handlePlaySong, } = usePlayerStore();
+const { handlePlaySong } = usePlayerStore();
 
 const comment_in_submission = ref(false),
   comment_show_alert = ref(false),
@@ -137,7 +137,7 @@ watch(sort, (newSort) => {
 
 const playSong = (song) => {
   handlePlaySong(song);
-}
+};
 
 const addComment = async (data, context) => {
   comment_in_submission.value = true;
