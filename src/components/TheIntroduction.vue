@@ -1,12 +1,14 @@
 <script setup>
 import musicImage from "@/assets/img/introduction-music.png";
+import headerImage from '@/assets/img/header.png'
+
 </script>
 <template>
   <!-- Introduction -->
   <section class="mb-8 py-20 text-white text-center relative">
     <div
       class="absolute inset-0 w-full h-full bg-contain introduction-bg"
-      style="background-image: url(src/assets/img/header.png)"
+      :style="`background-image: url(${headerImage})`"
     ></div>
     <div class="container mx-auto">
       <div class="text-white main-header-content">
